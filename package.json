@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/react": "^2.6.14",
+    "date-fns": "^4.1.0",
+    "depcheck": "^1.4.7",
+    "framer-motion": "^12.0.0",
+    "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.1.4"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "typescript": "^5",
@@ -23,5 +27,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
     "@eslint/eslintrc": "^3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
