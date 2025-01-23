@@ -1,6 +1,7 @@
 "use client";
 import { Link, Navbar, NavbarBrand, NavbarContent } from "@heroui/react";
 import { useState } from "react";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 export const AcmeLogo = () => {
   return (
@@ -72,16 +73,17 @@ export default function HeroNavbar() {
         </NavbarItem> */}
       </NavbarContent>
 
-      {/* <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
+      <NavbarContent justify="end">
+        <ThemeToggleButton />
+        {/* <NavbarItem className="hidden lg:flex">
           <Link href="#">Login</Link>
         </NavbarItem>
         <NavbarItem>
           <Button as={Link} color="warning" href="#" variant="flat">
             Sign Up
           </Button>
-        </NavbarItem>
-      </NavbarContent> */}
+        </NavbarItem> */}
+      </NavbarContent>
 
       {/* <NavbarMenu>
         {menuItems.map((item, index) => (
