@@ -2,16 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+html {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body.dark {
-  background-color: #121212;
+html.dark {
+  background-color: black;
   color: white;
 }
 
-body.light {
+html.light {
   background-color: white;
   color: black;
 }

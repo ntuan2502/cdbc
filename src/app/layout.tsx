@@ -19,7 +19,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <HeroNavbar />
-          <div className="mx-auto gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl">{children}</div>
+          <div className="mx-auto gap-4 text-base md:gap-5 lg:gap-6 md:max-w-3xl min-h-screen">{children}</div>
         </Providers>
       </body>
     </html>

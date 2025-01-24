@@ -7,14 +7,22 @@ import { formatDate } from "../utils/formatDate";
 import ChapterNavigation from "../components/ChapterNavigation";
 
 const fetchChapterData = async (slug: string, API_URL: string) => {
-  const response = await fetch(`${API_URL}/articles?filters[slug][$eq]=${slug}&`);
+  const response = await fetch(
+    `${API_URL}/articles?filters[slug][$eq]=${slug}&`
+  );
   const data = await response.json();
   return data.data[0] || null;
 };
 
-const fetchAdjacentChapter = async (number: number, direction: "previous" | "next", API_URL: string) => {
+const fetchAdjacentChapter = async (
+  number: number,
+  direction: "previous" | "next",
+  API_URL: string
+) => {
   const response = await fetch(
-    `${API_URL}/articles?filters[number][$eq]=${number + (direction === "previous" ? -1 : 1)}&fields=title,slug`
+    `${API_URL}/articles?filters[number][$eq]=${
+      number + (direction === "previous" ? -1 : 1)
+    }&fields=title,slug`
   );
   const data = await response.json();
   return data.data[0] || null;
@@ -40,8 +48,16 @@ export default function ChapterPage() {
       const content = currentChapter.content;
       setWordCount(countWords(content));
 
-      const previous = await fetchAdjacentChapter(currentChapter.number, "previous", API_URL);
-      const next = await fetchAdjacentChapter(currentChapter.number, "next", API_URL);
+      const previous = await fetchAdjacentChapter(
+        currentChapter.number,
+        "previous",
+        API_URL
+      );
+      const next = await fetchAdjacentChapter(
+        currentChapter.number,
+        "next",
+        API_URL
+      );
 
       setPreviousChapter(previous);
       setNextChapter(next);
@@ -53,10 +69,14 @@ export default function ChapterPage() {
   }, [slug, fetchData]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
+    // Đảm bảo cuộn trang lên đầu sau khi tất cả phần tử đã được render
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 200); // Delay lâu hơn nếu cần
+  }, [chapter, previousChapter, nextChapter]);
 
-  const countWords = (text: string): number => {
+  const countWords = (text: string | null): number => {
+    if (!text) return 0; // Return 0 if the text is null or undefined
     return text.trim().split(/\s+/).filter(Boolean).length;
   };
 

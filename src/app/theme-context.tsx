@@ -36,10 +36,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("theme", newTheme); // Lưu theme vào localStorage
   };
 
-  // Cập nhật class của body
+  // Cập nhật class của <html> thay vì <body>
   useEffect(() => {
-    document.body.classList.remove("light", "dark");
-    document.body.classList.add(theme);
+    const htmlElement = document.documentElement; // Tham chiếu đến <html> thay vì <body>
+    htmlElement.classList.remove("light", "dark");
+    htmlElement.classList.add(theme);
   }, [theme]);
 
   return (
