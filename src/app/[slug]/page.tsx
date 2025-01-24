@@ -1,28 +1,21 @@
-"use client";
+"use client"; // Đảm bảo rằng đây là một component client-side
+
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Chapter } from "@/types/chapter";
-import { Spinner } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import { formatDate } from "../utils/formatDate";
 import ChapterNavigation from "../components/ChapterNavigation";
 
 const fetchChapterData = async (slug: string, API_URL: string) => {
-  const response = await fetch(
-    `${API_URL}/articles?filters[slug][$eq]=${slug}&`
-  );
+  const response = await fetch(`${API_URL}/articles?filters[slug][$eq]=${slug}`);
   const data = await response.json();
   return data.data[0] || null;
 };
 
-const fetchAdjacentChapter = async (
-  number: number,
-  direction: "previous" | "next",
-  API_URL: string
-) => {
+const fetchAdjacentChapters = async (number: number, direction: "previous" | "next", API_URL: string) => {
   const response = await fetch(
-    `${API_URL}/articles?filters[number][$eq]=${
-      number + (direction === "previous" ? -1 : 1)
-    }&fields=title,slug`
+    `${API_URL}/articles?filters[number][$eq]=${number + (direction === "previous" ? -1 : 1)}&fields=title,slug`
   );
   const data = await response.json();
   return data.data[0] || null;
@@ -37,6 +30,15 @@ export default function ChapterPage() {
   const [previousChapter, setPreviousChapter] = useState<Chapter | null>(null);
   const [nextChapter, setNextChapter] = useState<Chapter | null>(null);
   const [wordCount, setWordCount] = useState(0);
+  const [fontSize, setFontSize] = useState<number>(16); // Default font size is 16
+
+  useEffect(() => {
+    // Kiểm tra và lấy giá trị fontSize từ localStorage sau khi component mount
+    const savedFontSize = localStorage.getItem("fontSize");
+    if (savedFontSize) {
+      setFontSize(parseInt(savedFontSize));
+    }
+  }, []);
 
   const fetchData = useCallback(async () => {
     if (!slug) return;
@@ -45,19 +47,12 @@ export default function ChapterPage() {
     setChapter(currentChapter);
 
     if (currentChapter) {
-      const content = currentChapter.content;
-      setWordCount(countWords(content));
+      setWordCount(countWords(currentChapter.content));
 
-      const previous = await fetchAdjacentChapter(
-        currentChapter.number,
-        "previous",
-        API_URL
-      );
-      const next = await fetchAdjacentChapter(
-        currentChapter.number,
-        "next",
-        API_URL
-      );
+      const [previous, next] = await Promise.all([
+        fetchAdjacentChapters(currentChapter.number, "previous", API_URL),
+        fetchAdjacentChapters(currentChapter.number, "next", API_URL),
+      ]);
 
       setPreviousChapter(previous);
       setNextChapter(next);
@@ -70,15 +65,18 @@ export default function ChapterPage() {
 
   useEffect(() => {
     // Đảm bảo cuộn trang lên đầu sau khi tất cả phần tử đã được render
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 200); // Delay lâu hơn nếu cần
+    setTimeout(() => window.scrollTo(0, 0), 200);
   }, [chapter, previousChapter, nextChapter]);
 
-  const countWords = (text: string | null): number => {
-    if (!text) return 0; // Return 0 if the text is null or undefined
-    return text.trim().split(/\s+/).filter(Boolean).length;
+  const countWords = (text: string | null): number => text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
+
+  const updateFontSize = (delta: number) => {
+    const newFontSize = Math.max(12, Math.min(fontSize + delta, 20));
+    setFontSize(newFontSize);
+    localStorage.setItem("fontSize", newFontSize.toString()); // Lưu lại vào localStorage
   };
+
+  const hasChapterContentId = chapter?.content && /id=["']chapter-content["']/.test(chapter.content);
 
   if (!chapter) {
     return (
@@ -116,7 +114,39 @@ export default function ChapterPage() {
         <p>Thời gian: {formatDate(chapter.createdAt)}</p>
       </div>
 
-      <div dangerouslySetInnerHTML={{ __html: chapter.content }} />
+      <div className="flex justify-center items-center gap-4 my-4">
+        <Button
+          color="primary"
+          size="sm"
+          onPress={() => updateFontSize(-1)}
+          isDisabled={fontSize <= 12}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6" />
+          </svg>
+        </Button>
+        <p>{fontSize}</p>
+        <Button
+          color="primary"
+          size="sm"
+          onPress={() => updateFontSize(1)}
+          isDisabled={fontSize >= 20}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+          </svg>
+        </Button>
+      </div>
+
+      {chapter.content ? (
+        <div
+          id="chapter-content"
+          style={{ fontSize: `${fontSize}px` }}
+          dangerouslySetInnerHTML={{ __html: hasChapterContentId ? chapter.content.replace(/(<div id=["']chapter-content["'])/g, `$1 style="font-size: ${fontSize}px"`) : chapter.content }}
+        />
+      ) : (
+        <div className="text-center">Không có nội dung</div>
+      )}
 
       <div className="flex justify-between my-2">
         <ChapterNavigation

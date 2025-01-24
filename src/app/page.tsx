@@ -89,7 +89,7 @@ export default function Home() {
                     <div className="font-semibold">{chapter.title}</div>
                     <Tooltip
                       showArrow={true}
-                      placement="left"
+                      placement="top-start"
                       content={formatDate(chapter.createdAt)}
                     >
                       <div>{formatRelativeTime(chapter.createdAt)}</div>

@@ -1,7 +1,8 @@
 "use client";
-import { Link, Navbar, NavbarBrand, NavbarContent } from "@heroui/react";
+import { Navbar, NavbarBrand, NavbarContent } from "@heroui/react";
 import { useState } from "react";
 import ThemeToggleButton from "./ThemeToggleButton";
+import Link from "next/link";
 
 export const AcmeLogo = () => {
   return (
