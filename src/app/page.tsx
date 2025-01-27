@@ -15,10 +15,16 @@ import {
 import { formatDate } from "./utils/formatDate";
 import formatRelativeTime from "./utils/formatRelativeTime";
 import PaginationControls from "./components/PaginationControls"; // Import PaginationControls
+import { useSearchParams, useRouter } from "next/navigation"; // Import useSearchParams từ next/navigation
 
 export default function Home() {
+  // Sử dụng useSearchParams để lấy tham số trang từ URL
+  const searchParams = useSearchParams(); // Lấy searchParams từ URL
+  const pageQuery = parseInt(searchParams?.get("p") || "1"); // Lấy giá trị của tham số 'p' từ URL
+  const router = useRouter();
+
   const [filteredChapters, setFilteredChapters] = useState<Chapter[]>([]); // Lưu trữ chương đã lọc
-  const [currentPage, setCurrentPage] = useState(1); // Lưu trữ trang hiện tại
+  const [currentPage, setCurrentPage] = useState(pageQuery); // Lưu trữ trang hiện tại
   const [totalPages, setTotalPages] = useState(0); // Lưu trữ tổng số trang
   const [error, setError] = useState<string | null>(null); // Lưu trữ thông báo lỗi
 
@@ -57,10 +63,18 @@ export default function Home() {
     [API_URL]
   );
 
+  // Gọi API khi trang thay đổi
   useEffect(() => {
-    fetchChapters(currentPage); // Gọi API khi trang thay đổi
+    fetchChapters(currentPage);
   }, [currentPage, fetchChapters]);
 
+  // Cập nhật URL khi thay đổi trang
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+
+    // Cập nhật URL với tham số 'p' mới
+    router.push(`?p=${page}`); // Cập nhật URL mà không reload trang
+  };
   return (
     <div>
       {/* Hiển thị thông báo lỗi nếu có lỗi */}
@@ -71,7 +85,7 @@ export default function Home() {
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
         />
       )}
 
@@ -125,7 +139,7 @@ export default function Home() {
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={setCurrentPage}
+          onPageChange={handlePageChange}
         />
       )}
     </div>
