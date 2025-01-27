@@ -82,22 +82,34 @@ export default function Home() {
             <TableColumn>Danh sách chương</TableColumn>
           </TableHeader>
           <TableBody items={filteredChapters}>
-            {(chapter) => (
-              <TableRow key={chapter.slug}>
-                <TableCell>
-                  <Link href={`/${chapter.slug}`}>
-                    <div className="font-semibold">{chapter.title}</div>
-                    <Tooltip
-                      showArrow={true}
-                      placement="top-start"
-                      content={formatDate(chapter.createdAt)}
-                    >
-                      <div>{formatRelativeTime(chapter.createdAt)}</div>
-                    </Tooltip>
-                  </Link>
-                </TableCell>
-              </TableRow>
-            )}
+            {(chapter) => {
+              // Kiểm tra thời gian của chương
+              const isNew =
+                new Date().getTime() - new Date(chapter.createdAt).getTime() <
+                24 * 60 * 60 * 1000; // Nếu mới hơn 1 ngày
+
+              return (
+                <TableRow key={chapter.slug}>
+                  <TableCell>
+                    <Link href={`/${chapter.slug}`}>
+                      <div className="font-semibold">
+                        {chapter.title}
+                        {isNew && (
+                          <span className="text-red-500 font-bold blink-effect mx-1">NEW </span>
+                        )}
+                      </div>
+                      <Tooltip
+                        showArrow={true}
+                        placement="top-start"
+                        content={formatDate(chapter.createdAt)}
+                      >
+                        <div>{formatRelativeTime(chapter.createdAt)}</div>
+                      </Tooltip>
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              );
+            }}
           </TableBody>
         </Table>
       ) : (
