@@ -6,6 +6,7 @@ import { Chapter } from "@/types/chapter";
 import { Button, Spinner } from "@heroui/react";
 import { formatDate } from "@/app/utils/formatDate";
 import ChapterNavigation from "@/app/components/ChapterNavigation";
+import TextToSpeech from "@/components/TextToSpeech";
 
 // Hàm chuyển đổi lượt thích và lượt đọc thành định dạng K/M
 const formatNumber = (num: number) => {
@@ -184,18 +185,22 @@ export default function ChapterPage() {
       </div>
 
       {chapter.content ? (
-        <div
-          id="chapter-content"
-          style={{ fontSize: `${fontSize}px` }}
-          dangerouslySetInnerHTML={{
-            __html: hasChapterContentId
-              ? chapter.content.replace(
-                  /(<div id=["']chapter-content["'])/g,
-                  `$1 style="font-size: ${fontSize}px"`
-                )
-              : chapter.content,
-          }}
-        />
+        <div>
+          <TextToSpeech content={chapter.content} />
+
+          <div
+            id="chapter-content"
+            style={{ fontSize: `${fontSize}px` }}
+            dangerouslySetInnerHTML={{
+              __html: hasChapterContentId
+                ? chapter.content.replace(
+                    /(<div id=["']chapter-content["'])/g,
+                    `$1 style="font-size: ${fontSize}px"`
+                  )
+                : chapter.content,
+            }}
+          />
+        </div>
       ) : (
         <div className="text-center">Không có nội dung</div>
       )}
