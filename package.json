@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@heroui/react": "^2.6.14",
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/speed-insights": "^1.1.0",
     "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "depcheck": "^1.4.7",
