@@ -7,9 +7,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL as string; // Lấy API_URL từ
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  // Đợi params trước khi sử dụng
+  // Giữ lại await params vì params là một Promise
   const { slug } = await params;
 
   try {
@@ -26,7 +26,6 @@ export async function GET(
         category: "vqlp10gd13lcwe43pfxhx13d",
         content,
         time,
-        locale: "en",
       },
     };
 
@@ -40,13 +39,13 @@ export async function GET(
     return NextResponse.json(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error("Axios error response: ", error.response?.data);
+      console.error("Lỗi Axios: ", error.response?.data);
       return NextResponse.json(
         { error: error.response?.data || error.message },
         { status: 500 }
       );
     } else {
-      console.error("General error: ", error);
+      console.error("Lỗi chung: ", error);
       return NextResponse.json({ error: "Có lỗi xảy ra" }, { status: 500 });
     }
   }
