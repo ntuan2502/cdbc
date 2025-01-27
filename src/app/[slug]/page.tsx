@@ -7,6 +7,16 @@ import { Button, Spinner } from "@heroui/react";
 import { formatDate } from "@/app/utils/formatDate";
 import ChapterNavigation from "@/app/components/ChapterNavigation";
 
+// Hàm chuyển đổi lượt thích và lượt đọc thành định dạng K/M
+const formatNumber = (num: number) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + "M"; // Phần triệu
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + "K"; // Phần ngàn
+  }
+  return num.toString();
+};
+
 const fetchChapterData = async (slug: string, API_URL: string) => {
   const response = await fetch(
     `${API_URL}/articles?filters[slug][$eq]=${slug}`
@@ -120,8 +130,11 @@ export default function ChapterPage() {
       </div>
 
       <div className="my-4 text-center">
-        <p>Số lượng từ trong chương: {wordCount}</p>
+        <p>Số chữ: {wordCount}</p>
+        <p>Lượt thích: {formatNumber(chapter.likes || 0)}</p>
+        <p>Lượt đọc: {formatNumber(chapter.reads || 0)}</p>
         <p>Thời gian: {formatDate(chapter.time)}</p>
+        {chapter.update && <p>Cập nhật: {formatDate(chapter.update)}</p>}
       </div>
 
       <div className="flex justify-center items-center gap-4 my-4">

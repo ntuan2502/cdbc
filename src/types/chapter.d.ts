@@ -6,4 +6,7 @@ export interface Chapter {
   number: number;
   content: string;
   time: string;
+  update: string;
+  likes: number;
+  reads: number;
 }
