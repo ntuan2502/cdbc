@@ -5,5 +5,5 @@ export interface Chapter {
   slug: string;
   number: number;
   content: string;
-  createdAt: string;
+  time: string;
 }

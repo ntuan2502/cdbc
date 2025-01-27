@@ -1,6 +1,6 @@
 "use client"; // Đảm bảo đây là client-side component
 
-import { useTheme } from "../theme-context";
+import { useTheme } from "@/app/theme-context";
 
 const ThemeToggleButton = () => {
   const { theme, toggleTheme } = useTheme();

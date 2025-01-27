@@ -4,18 +4,26 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Chapter } from "@/types/chapter";
 import { Button, Spinner } from "@heroui/react";
-import { formatDate } from "../utils/formatDate";
-import ChapterNavigation from "../components/ChapterNavigation";
+import { formatDate } from "@/app/utils/formatDate";
+import ChapterNavigation from "@/app/components/ChapterNavigation";
 
 const fetchChapterData = async (slug: string, API_URL: string) => {
-  const response = await fetch(`${API_URL}/articles?filters[slug][$eq]=${slug}`);
+  const response = await fetch(
+    `${API_URL}/articles?filters[slug][$eq]=${slug}`
+  );
   const data = await response.json();
   return data.data[0] || null;
 };
 
-const fetchAdjacentChapters = async (number: number, direction: "previous" | "next", API_URL: string) => {
+const fetchAdjacentChapters = async (
+  number: number,
+  direction: "previous" | "next",
+  API_URL: string
+) => {
   const response = await fetch(
-    `${API_URL}/articles?filters[number][$eq]=${number + (direction === "previous" ? -1 : 1)}&fields=title,slug`
+    `${API_URL}/articles?filters[number][$eq]=${
+      number + (direction === "previous" ? -1 : 1)
+    }&fields=title,slug`
   );
   const data = await response.json();
   return data.data[0] || null;
@@ -68,7 +76,8 @@ export default function ChapterPage() {
     setTimeout(() => window.scrollTo(0, 0), 200);
   }, [chapter, previousChapter, nextChapter]);
 
-  const countWords = (text: string | null): number => text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
+  const countWords = (text: string | null): number =>
+    text ? text.trim().split(/\s+/).filter(Boolean).length : 0;
 
   const updateFontSize = (delta: number) => {
     const newFontSize = Math.max(12, Math.min(fontSize + delta, 20));
@@ -76,7 +85,8 @@ export default function ChapterPage() {
     localStorage.setItem("fontSize", newFontSize.toString()); // Lưu lại vào localStorage
   };
 
-  const hasChapterContentId = chapter?.content && /id=["']chapter-content["']/.test(chapter.content);
+  const hasChapterContentId =
+    chapter?.content && /id=["']chapter-content["']/.test(chapter.content);
 
   if (!chapter) {
     return (
@@ -111,7 +121,7 @@ export default function ChapterPage() {
 
       <div className="my-4 text-center">
         <p>Số lượng từ trong chương: {wordCount}</p>
-        <p>Thời gian: {formatDate(chapter.createdAt)}</p>
+        <p>Thời gian: {formatDate(chapter.time)}</p>
       </div>
 
       <div className="flex justify-center items-center gap-4 my-4">
@@ -121,8 +131,19 @@ export default function ChapterPage() {
           onPress={() => updateFontSize(-1)}
           isDisabled={fontSize <= 12}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM13.5 10.5h-6"
+            />
           </svg>
         </Button>
         <p>{fontSize}</p>
@@ -132,8 +153,19 @@ export default function ChapterPage() {
           onPress={() => updateFontSize(1)}
           isDisabled={fontSize >= 20}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6"
+            />
           </svg>
         </Button>
       </div>
@@ -142,7 +174,14 @@ export default function ChapterPage() {
         <div
           id="chapter-content"
           style={{ fontSize: `${fontSize}px` }}
-          dangerouslySetInnerHTML={{ __html: hasChapterContentId ? chapter.content.replace(/(<div id=["']chapter-content["'])/g, `$1 style="font-size: ${fontSize}px"`) : chapter.content }}
+          dangerouslySetInnerHTML={{
+            __html: hasChapterContentId
+              ? chapter.content.replace(
+                  /(<div id=["']chapter-content["'])/g,
+                  `$1 style="font-size: ${fontSize}px"`
+                )
+              : chapter.content,
+          }}
         />
       ) : (
         <div className="text-center">Không có nội dung</div>

@@ -1,7 +1,7 @@
 "use client"; // Đánh dấu đây là client component
 
 import { useEffect, useState, useCallback } from "react";
-import { Chapter } from "../types/chapter"; // Import type Chapter
+import { Chapter } from "@/types/chapter"; // Import type Chapter
 import Link from "next/link"; // Link từ next/link
 import {
   Table,
@@ -30,7 +30,7 @@ export default function Home() {
     async (page: number) => {
       try {
         const response = await fetch(
-          `${API_URL}/articles?fields=title,slug,number,createdAt&sort=number:DESC&pagination[page]=${page}&pagination[pageSize]=${chaptersPerPage}`
+          `${API_URL}/articles?fields=title,slug,number,time&sort=number:DESC&pagination[page]=${page}&pagination[pageSize]=${chaptersPerPage}`
         );
 
         if (!response.ok) {
@@ -43,7 +43,7 @@ export default function Home() {
           title: chapter.title,
           slug: chapter.slug,
           number: chapter.number,
-          createdAt: chapter.createdAt,
+          time: chapter.time,
         }));
 
         setFilteredChapters(chaptersToStore); // Cập nhật các chương
@@ -85,7 +85,7 @@ export default function Home() {
             {(chapter) => {
               // Kiểm tra thời gian của chương
               const isNew =
-                new Date().getTime() - new Date(chapter.createdAt).getTime() <
+                new Date().getTime() - new Date(chapter.time).getTime() <
                 24 * 60 * 60 * 1000; // Nếu mới hơn 1 ngày
 
               return (
@@ -95,15 +95,17 @@ export default function Home() {
                       <div className="font-semibold">
                         {chapter.title}
                         {isNew && (
-                          <span className="text-red-500 font-bold blink-effect mx-1">NEW </span>
+                          <span className="text-red-500 font-bold blink-effect mx-1">
+                            NEW{" "}
+                          </span>
                         )}
                       </div>
                       <Tooltip
                         showArrow={true}
                         placement="top-start"
-                        content={formatDate(chapter.createdAt)}
+                        content={formatDate(chapter.time)}
                       >
-                        <div>{formatRelativeTime(chapter.createdAt)}</div>
+                        <div>{formatRelativeTime(chapter.time)}</div>
                       </Tooltip>
                     </Link>
                   </TableCell>
